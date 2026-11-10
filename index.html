@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Control de Visitas y Evidencia Digital</title>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Segoe UI, Arial, sans-serif; }
+        body { background-color: #F8F9F9; color: #334155; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        header { background-color: #154360; color: white; border-bottom: 2px solid #0E2E43; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .header-container { max-width: 1400px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+        
+        main { flex-grow: 1; max-width: 1400px; width: 100%; margin: 0 auto; padding: 2rem 1.5rem; display: flex; flex-direction: column; gap: 2rem; }
+        
+        section { background: white; border-radius: 0.75rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1); border: 1px solid #E5E7EB; overflow: hidden; }
+        .sec-header { padding: 1rem 1.5rem; border-bottom: 1px solid #E5E7EB; background: #FAFAFA; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+        
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background: #F8FAFC; color: #64748B; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; padding: 0.875rem 1rem; border-bottom: 1px solid #E5E7EB; white-space: nowrap; }
+        td { padding: 1rem; font-size: 0.825rem; border-bottom: 1px solid #F1F5F9; color: #1E293B; }
+        tr:hover { background-color: #F8FAFC; }
+
+        .badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; display: inline-block; }
+        .badge-sur { background-color: #E0F2FE; color: #0369A1; }
+        .badge-norte { background-color: #DCFCE7; color: #15803D; }
+        .badge-centro { background-color: #FEF3C7; color: #B45309; }
+
+        .btn { padding: 0.4rem 0.8rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; border: none; transition: background 0.2s; text-decoration: none; white-space: nowrap; }
+        .btn-blue { background-color: #2563EB; color: white; }
+        .btn-emerald { background-color: #059669; color: white; }
+        .btn-slate { background-color: #475569; color: white; }
+        .btn-red { background-color: #EF4444; color: white; }
+
+        .banner-red { background-color: #E74C3C; border-radius: 0.75rem; padding: 1rem 1.5rem; color: white; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); flex-wrap: wrap; gap: 1rem; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); z-index: 99999; display: none; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-box { background: white; border-radius: 1rem; max-width: 32rem; width: 100%; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        
+        input[type="text"], input[type="date"], select { padding: 0.5rem 0.75rem; font-size: 0.8rem; border: 1px solid #CBD5E1; border-radius: 0.5rem; outline: none; background: white; width: 100%; }
+        .form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
+        .form-label { font-size: 0.75rem; font-weight: 600; color: #475569; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="width: 2.5rem; height: 2.5rem; background: rgba(255,255,255,0.1); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                    📋
+                </div>
+                <div>
+                    <h1 style="font-size: 1rem; font-weight: bold; text-transform: uppercase;">REPORTE TÉCNICO DE SUPERVISIÓN Y MANTENIMIENTO</h1>
+                    <p style="font-size: 0.75rem; color: #CBD5E1; font-weight: 300;">Plataforma Operativa de Control y Evidencia Digital</p>
+                </div>
+            </div>
+            <div style="text-align: right; font-size: 0.75rem; color: #CBD5E1;">
+                <div id="clock-date" style="font-weight: 600; color: white;">--/--/----</div>
+                <div>Periodo: Anual 2026</div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- MATRIZ DE VISITAS -->
+        <section>
+            <div class="sec-header">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="padding: 0.5rem; background: #EEF2FF; color: #4F46E5; border-radius: 0.5rem; font-size: 1.1rem;">📊</div>
+                    <div>
+                        <h2 style="font-size: 0.95rem; font-weight: bold; color: #0F172A;">Matriz Integral de Control de Visitas</h2>
+                        <p style="font-size: 0.75rem; color: #64748B;">Consolidado general por Supervisor y Zona Regional</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 0.5rem; background: white; padding: 0.35rem 0.75rem; border-radius: 0.5rem; border: 1px solid #CBD5E1; font-size: 0.75rem; color: #475569;">
+                    <span>Ver Zona:</span>
+                    <select id="filter-matrix-zone" onchange="renderMatrixTable()" style="border: none; font-weight: 600; color: #1E293B; cursor: pointer; width: auto;">
+                        <option value="TODAS">Todas las Zonas</option>
+                        <option value="SUR">SUR</option>
+                        <option value="NORTE">NORTE</option>
+                        <option value="CENTRO">CENTRO</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>OYM / Supervisor</th>
+                            <th>Zona Regional</th>
+                            <th style="text-align: center;">Ago 2026</th>
+                            <th style="text-align: center;">Set 2026</th>
+                            <th style="text-align: center;">Oct 2026</th>
+                            <th style="text-align: center;">Nov 2026</th>
+                            <th style="text-align: center;">Dic 2026</th>
+                            <th style="text-align: right;">Total Visitas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matrix-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- BANNER DE ACCIÓN -->
+        <div class="banner-red">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span style="font-size: 1.5rem;">📂</span>
+                <div>
+                    <h3 style="font-size: 0.9rem; font-weight: bold; text-transform: uppercase;">GESTIÓN DE EVIDENCIAS E INFRAESTRUCTURA</h3>
+                    <p style="font-size: 0.75rem; opacity: 0.9; font-weight: 300;">Agrega nuevos nodos por OyM y carga la evidencia correspondiente.</p>
+                </div>
+            </div>
+            <button type="button" onclick="openModal()" class="btn btn-emerald" style="border: 1px solid rgba(255,255,255,0.3); font-size: 0.8rem; padding: 0.6rem 1.2rem; cursor: pointer;">
+                ➕ Agregar Nuevo Site
+            </button>
+        </div>
+
+        <!-- PLANILLA DE EVIDENCIAS -->
+        <section>
+            <div class="sec-header">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="padding: 0.5rem; background: #FEF3C7; color: #D97706; border-radius: 0.5rem; font-size: 1.1rem;">📄</div>
+                    <div>
+                        <h2 style="font-size: 0.95rem; font-weight: bold; color: #0F172A;">Planilla de Control Físico y Evidencia Digital</h2>
+                        <p style="font-size: 0.75rem; color: #64748B;">Subida de reportes con clasificación automática por mes en la matriz</p>
+                    </div>
+                </div>
+
+                <div style="position: relative; width: 100%; max-width: 18rem;">
+                    <input type="text" id="search-sites" oninput="renderEvidencePlanilla()" placeholder="🔍 Buscar por Site o Inspector...">
+                </div>
+            </div>
+
+            <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #E5E7EB; background: white; display: flex; gap: 0.5rem; overflow-x: auto;" id="oym-tabs-container"></div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>OYM / Inspector</th>
+                            <th>Zona</th>
+                            <th>Site / Infraestructura</th>
+                            <th>Fecha Inspección</th>
+                            <th style="text-align: center;">Reporte Digital / Evidencia</th>
+                            <th style="text-align: center;">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="planilla-tbody"></tbody>
+                </table>
+            </div>
+
+            <div id="empty-state" style="display: none; padding: 3rem; text-align: center; color: #94A3B8;">
+                <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📂</div>
+                <p style="font-size: 0.85rem; margin-bottom: 0.5rem;">No hay registros de infraestructura agregados aún.</p>
+                <button type="button" onclick="openModal()" class="btn btn-blue" style="font-size: 0.75rem;">
+                    ➕ Registrar el primer Site
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL AGREGAR NUEVO SITE -->
+    <div id="add-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div style="padding: 1rem 1.5rem; background: #154360; color: white; display: flex; align-items: center; justify-content: space-between;">
+                <h3 style="font-size: 0.95rem; font-weight: bold;">Agregar Nuevo Site / Registro</h3>
+                <button type="button" onclick="closeModal()" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 2rem; height: 2rem; border-radius: 50%; cursor: pointer;">×</button>
+            </div>
+            
+            <div style="padding: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label">Seleccionar OYM / Inspector:</label>
+                    <select id="form-oym"></select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nombre del Site / Infraestructura:</label>
+                    <input type="text" id="form-site" placeholder="Ej: SITE-1024_LIMA">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Fecha de Inspección:</label>
+                    <input type="date" id="form-fecha">
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.5rem;">
+                    <button type="button" onclick="closeModal()" class="btn btn-slate">Cancelar</button>
+                    <button type="button" onclick="guardarSiteDirecto()" class="btn btn-emerald">💾 Guardar Registro</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SUPERVISORES = [
+            { id: 's1', nombre: 'Antero Peña', zona: 'SUR' },
+            { id: 's2', nombre: 'Miguel Cruz', zona: 'NORTE' },
+            { id: 's3', nombre: 'John Atkins', zona: 'NORTE' },
+            { id: 's4', nombre: 'Jesus De la Torre', zona: 'CENTRO' },
+            { id: 's5', nombre: 'Kevin Callupe', zona: 'CENTRO' }
+        ];
+
+        let sitesList = JSON.parse(localStorage.getItem('oym_sites_list')) || [];
+        let evidencias = JSON.parse(localStorage.getItem('oym_evidencias_data')) || {};
+        let selectedOyMFilter = 'TODOS';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('clock-date').innerText = new Date().toLocaleDateString('es-PE');
+            poblarSelectOyM();
+            renderOyMTabs();
+            renderMatrixTable();
+            renderEvidencePlanilla();
+        });
+
+        function poblarSelectOyM() {
+            const select = document.getElementById('form-oym');
+            if(select) {
+                select.innerHTML = SUPERVISORES.map(s => `<option value="${s.id}">${s.nombre} (${s.zona})</option>`).join('');
+            }
+        }
+
+        function openModal() {
+            poblarSelectOyM();
+            const modal = document.getElementById('add-modal');
+            if(modal) modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('add-modal');
+            if(modal) modal.style.display = 'none';
+        }
+
+        function guardarSiteDirecto() {
+            const supId = document.getElementById('form-oym').value;
+            const siteName = document.getElementById('form-site').value.trim();
+            const fechaRaw = document.getElementById('form-fecha').value;
+
+            if (!siteName || !fechaRaw) {
+                alert("Por favor completa el nombre del Site y la fecha de inspección.");
+                return;
+            }
+
+            const [yyyy, mm, dd] = fechaRaw.split('-');
+            const fechaFormatted = `${dd}/${mm}/${yyyy}`;
+
+            sitesList.push({
+                id: 'site_' + Date.now(),
+                supId: supId,
+                site: siteName,
+                fecha: fechaFormatted,
+                rawDate: fechaRaw // Guardamos formato YYYY-MM para filtrar por mes exacto
+            });
+
+            localStorage.setItem('oym_sites_list', JSON.stringify(sitesList));
+
+            closeModal();
+            document.getElementById('form-site').value = '';
+            document.getElementById('form-fecha').value = '';
+
+            renderMatrixTable();
+            renderEvidencePlanilla();
+        }
+
+        function getZoneBadge(zona) {
+            const z = zona.toUpperCase();
+            let cls = 'badge-sur';
+            if(z === 'NORTE') cls = 'badge-norte';
+            if(z === 'CENTRO') cls = 'badge-centro';
+            return `<span class="badge ${cls}">${z}</span>`;
+        }
+
+        function renderOyMTabs() {
+            const container = document.getElementById('oym-tabs-container');
+            if(!container) return;
+            let html = `<button type="button" onclick="setOyMFilter('TODOS')" class="btn ${selectedOyMFilter === 'TODOS' ? 'btn-blue' : 'btn-slate'}">Todos los OyM</button>`;
+            SUPERVISORES.forEach(sup => {
+                const isActive = selectedOyMFilter === sup.id;
+                html += `<button type="button" onclick="setOyMFilter('${sup.id}')" class="btn ${isActive ? 'btn-blue' : 'btn-slate'}">${sup.nombre}</button>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function setOyMFilter(supId) {
+            selectedOyMFilter = supId;
+            renderOyMTabs();
+            renderEvidencePlanilla();
+        }
+
+        function renderMatrixTable() {
+            const tbody = document.getElementById('matrix-tbody');
+            const zoneFilter = document.getElementById('filter-matrix-zone').value;
+            if(!tbody) return;
+            let html = '';
+
+            SUPERVISORES.forEach(sup => {
+                if (zoneFilter !== 'TODAS' && sup.zona !== zoneFilter) return;
+                
+                const sitesOfSup = sitesList.filter(s => s.supId === sup.id);
+                
+                // Conteo dinámico por mes basado en el mes real de la fecha de inspección (meses 08, 09, 10, 11, 12)
+                let cAgo = 0, cSet = 0, cOct = 0, cNov = 0, cDic = 0;
+
+                sitesOfSup.forEach(s => {
+                    if (s.rawDate) {
+                        const mes = s.rawDate.split('-')[1];
+                        if (mes === '08') cAgo++;
+                        if (mes === '09') cSet++;
+                        if (mes === '10') cOct++;
+                        if (mes === '11') cNov++;
+                        if (mes === '12') cDic++;
+                    } else if (s.fecha) {
+                        // Compatibilidad para registros anteriores basados en texto DD/MM/YYYY
+                        const partes = s.fecha.split('/');
+                        if (partes.length === 3) {
+                            const mes = partes[1];
+                            if (mes === '08') cAgo++;
+                            if (mes === '09') cSet++;
+                            if (mes === '10') cOct++;
+                            if (mes === '11') cNov++;
+                            if (mes === '12') cDic++;
+                        }
+                    }
+                });
+
+                const totalVisitas = cAgo + cSet + cOct + cNov + cDic;
+
+                html += `
+                    <tr>
+                        <td style="font-weight: bold; color: #0F172A;">${sup.nombre}</td>
+                        <td>${getZoneBadge(sup.zona)}</td>
+                        <td style="text-align: center; font-weight: ${cAgo > 0 ? '600' : 'normal'};">${cAgo}</td>
+                        <td style="text-align: center; font-weight: ${cSet > 0 ? '600' : 'normal'};">${cSet}</td>
+                        <td style="text-align: center; font-weight: ${cOct > 0 ? '600' : 'normal'};">${cOct}</td>
+                        <td style="text-align: center; font-weight: ${cNov > 0 ? '600' : 'normal'};">${cNov}</td>
+                        <td style="text-align: center; font-weight: ${cDic > 0 ? '600' : 'normal'};">${cDic}</td>
+                        <td style="text-align: right; font-weight: bold; color: #154360;">${totalVisitas}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderEvidencePlanilla() {
+            const tbody = document.getElementById('planilla-tbody');
+            const searchInput = document.getElementById('search-sites');
+            const search = searchInput ? searchInput.value.toLowerCase() : '';
+            const emptyState = document.getElementById('empty-state');
+            if(!tbody) return;
+
+            let filteredSites = sitesList.filter(s => {
+                const sup = SUPERVISORES.find(sp => sp.id === s.supId);
+                if(!sup) return false;
+                const matchesOyM = selectedOyMFilter === 'TODOS' || s.supId === selectedOyMFilter;
+                const matchesSearch = s.site.toLowerCase().includes(search) || sup.nombre.toLowerCase().includes(search);
+                return matchesOyM && matchesSearch;
+            });
+
+            if (filteredSites.length === 0) {
+                tbody.innerHTML = '';
+                if(emptyState) emptyState.style.display = 'block';
+                return;
+            }
+
+            if(emptyState) emptyState.style.display = 'none';
+            let html = '';
+
+            filteredSites.forEach(item => {
+                const sup = SUPERVISORES.find(sp => sp.id === item.supId);
+                const hasFile = evidencias[item.id];
+
+                html += `
+                    <tr>
+                        <td style="font-weight: bold;">${sup.nombre}</td>
+                        <td>${getZoneBadge(sup.zona)}</td>
+                        <td>${item.site}</td>
+                        <td style="color: #64748B; font-size: 0.75rem;">${item.fecha}</td>
+                        <td style="text-align: center;">
+                            ${hasFile ? `
+                                <div style="display: inline-flex; gap: 0.5rem; align-items: center;">
+                                    <button type="button" onclick="openInNewTab('${item.id}')" class="btn btn-emerald">👁️ Ver Evidencia</button>
+                                    <label class="btn btn-slate" style="cursor: pointer;">🔄 Reemplazar<input type="file" style="display: none;" accept="image/*,.pdf" onchange="uploadEvidence(event, '${item.id}')"></label>
+                                </div>
+                            ` : `
+                                <label class="btn btn-blue" style="cursor: pointer; display: inline-flex;">📁 Cargar Evidencia<input type="file" style="display: none;" accept="image/*,.pdf" onchange="uploadEvidence(event, '${item.id}')"></label>
+                            `}
+                        </td>
+                        <td style="text-align: center;">
+                            <button type="button" onclick="deleteSite('${item.id}')" class="btn btn-red" style="padding: 0.35rem 0.6rem;">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function deleteSite(siteId) {
+            if (confirm("¿Estás seguro de eliminar este registro?")) {
+                sitesList = sitesList.filter(s => s.id !== siteId);
+                delete evidencias[siteId];
+                localStorage.setItem('oym_sites_list', JSON.stringify(sitesList));
+                localStorage.setItem('oym_evidencias_data', JSON.stringify(evidencias));
+                renderMatrixTable();
+                renderEvidencePlanilla();
+            }
+        }
+
+        function uploadEvidence(event, siteId) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                evidencias[siteId] = { name: file.name, type: file.type, data: e.target.result };
+                localStorage.setItem('oym_evidencias_data', JSON.stringify(evidencias));
+                renderMatrixTable();
+                renderEvidencePlanilla();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function openInNewTab(siteId) {
+            const ev = evidencias[siteId];
+            if (!ev) return;
+            const newWindow = window.open();
+            if (newWindow) {
+                newWindow.document.write(`<html><head><title>${ev.name}</title></head><body style="margin:0;background:#0F172A;display:flex;justify-content:center;align-items:center;min-height:100vh;">${ev.type.includes('image') ? `<img src="${ev.data}" style="max-width:100%;max-height:100vh;object-fit:contain;">` : `<iframe src="${ev.data}" width="100%" height="100%" style="border:none;height:100vh;"></iframe>`}</body></html>`);
+            }
+        }
+    </script>
+</body>
+</html>
